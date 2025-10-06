@@ -2,6 +2,11 @@ from fastapi import FastAPI, UploadFile, Form
 import shutil
 import tempfile
 import os
+from Frame_Extraction import extract_frames
+from Text_Extraction import extract_text_from_images
+from Audio_Extraction import extract_audio_to_text
+import moviepy as mp
+
 
 app = FastAPI()
 
@@ -30,8 +35,15 @@ async def process_video(video: UploadFile = None, url: str = Form(None)):
     # Speech-to-text
     audio_text = extract_audio_to_text(temp_video_path)
 
-    # Clean up
-    os.remove(temp_video_path)
+    # release and delete
+    if os.path.exists(temp_video_path):
+        try:
+            os.remove(temp_video_path)
+        except PermissionError: 
+            import time
+            time.sleep(1)
+            os.remove(temp_video_path)
+
 
     return {
         "audio_text": audio_text,

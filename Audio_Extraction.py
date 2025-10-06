@@ -1,9 +1,11 @@
-import moviepy.editor as mp
+import moviepy as mp
 import speech_recognition as sr
 
 def extract_audio_to_text(video_path):
     clip = mp.VideoFileClip(video_path)
-    clip.audio.write_audiofile("temp.wav", verbose=False, logger=None)
+    clip.audio.write_audiofile("temp.wav")
+    clip.close()
+
 
     recognizer = sr.Recognizer()
     with sr.AudioFile("temp.wav") as source:
